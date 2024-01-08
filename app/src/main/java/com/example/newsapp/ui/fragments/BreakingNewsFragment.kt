@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
@@ -45,6 +47,15 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
 
         viewModel = (activity as NewsActivity).viewModel
         setupRecyclerView()
+        newsAdapter.setOnItemClickListener {
+            try {
+                val action = BreakingNewsFragmentDirections.actionBreakingNewsFragmentToArticleFragment(it)
+                findNavController().navigate(action)
+            } catch (e: NullPointerException) {
+                Log.e(TAG, "Caught NullPointerException: ${e.message}")
+                // Xử lý ngoại lệ ở đây nếu cần thiết
+            }
+        }
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is Resource.Success -> {

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
@@ -46,7 +47,15 @@ class SearchNewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as NewsActivity).viewModel
         setupRecyclerView()
-
+        newsAdapter.setOnItemClickListener {
+            try {
+                val action = SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(it)
+                findNavController().navigate(action)
+            } catch (e: NullPointerException) {
+                Log.e(TAG, "Caught NullPointerException: ${e.message}")
+                // Xử lý ngoại lệ ở đây nếu cần thiết
+            }
+        }
         var job: Job? = null
         binding.etSearch.addTextChangedListener { editable ->
             job?.cancel()
